@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Photo Uploading and Cropping Tool</title>
+
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <!-- https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css-->
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <!-- jQuery library -->
+    <!-- https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js-->
+    <script src="jquery.min.js"></script>
+    <!-- Popper JS -->
+    <!-- https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js-->
+    <script src="popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <!-- https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js-->
+    <script src="bootstrap.min.js"></script>
+
+    <!-- https://github.com/jaysalvat/jquery.facedetection JavaScript -->
+    <script src="jquery.facedetection.min.js"></script>  
+
+    <!-- camanjs -->
+    <script src="caman.full.min.js"></script>  
+
+    <style>
+        canvas {
+            width: 80%;
+            height: auto;
+        }
+        
+        @media only screen and (min-width: 500px) { 
+            canvas {
+                width: 400px;
+                height: auto;
+            }
+
+            #gettingstarted {
+                width: 500px;
+                height: auto;
+            }
+        }
+
+
+        #myCanvasTop { position: absolute; z-index: 2}
+        #myCanvas    { position: absolute; z-index: 1}
+
+        .fixed-bottom {
+            position: fixed;
+            margin: auto;
+            height: 100px;
+            width: 100%;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1030;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="sticky-top">
+        <button class="btn btn-primary" id="btnRotate" disabled>Rotate photo</button>
+        <button class="btn btn-primary" id="btnFlip" disabled>Flip selfie</button>
+
+        <button class="btn btn-primary" id="btnClearrect" disabled>Clear</button>
+        <button class="btn btn-primary" id="btnReady" disabled>Ready</button>
+        <button class="btn btn-primary" id="btnCrop" disabled>Crop</button>
+
+        <button class="btn btn-secondary" id="btnLeft" disabled>Left</button>
+        <button class="btn btn-secondary" id="btnRight" disabled>Right</button>
+        <button class="btn btn-secondary" id="btnUp" disabled>Up</button>
+        <button class="btn btn-secondary" id="btnDown" disabled>Down</button>
+        <button class="btn btn-secondary" id="btnBig" disabled>Bigger</button>
+        <button class="btn btn-secondary" id="btnSmall" disabled>Smaller</button>
+
+        <button class="btn btn-success filter" id="b_dec">-</button>
+        <span class="filter">Brightness</span>
+        <button class="btn btn-success filter" id="b_inc">+</button>
+
+        <button class="btn btn-success filter" id="c_dec">-</button>
+        <span class="filter">Contrast</span>
+        <button class="btn btn-success filter" id="c_inc">+</button>
+
+        <button class="btn btn-success filter" id="e_dec">-</button>
+        <span class="filter">Exposure</span>
+        <button class="btn btn-success filter" id="e_inc">+</button>
+
+        <button class="btn btn-success filter" id="sa_dec">-</button>
+        <span class="filter">Saturation</span>
+        <button class="btn btn-success filter" id="sa_inc">+</button>
+
+        <button class="btn btn-primary" id="btnSave" disabled>Generate photo</button>
+    </div>
+    
+    <p id="hints" class="mb-1 lead">ERROR: Your browser does not support this application.  Please try it with another browser.</p>
+    <div class="input-group my-0">
+        <input id="fileTocrop" type="file" class="form-control"  aria-describedby="basic-addon2">
+    </div>
+
+    <div class="input-group mb-1" id="fileInput">
+        <input id="fileTosave" type="text" class="form-control" placeholder="NRIC Eg T1234567Z" aria-label="Name eg anything" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <span id="labelTosave" class="input-group-text" id="basic-addon2">.jpg</span>
+        </div>
+    </div>
+
+    <div id="samplepic">
+        <img src="ez-link-student-photo.jpg" />
+    </div>
+
+    <div class="row" id="allCanvas">
+        <div id="col2">
+            <canvas  id="myCanvasTop"></canvas>
+            <canvas  id="myCanvas"></canvas>
+        </div>
+        <div id="col3">
+            <canvas  id="myCropcanvas"></canvas>
+        </div>
+        <div id="col4">
+            <canvas  id="myTempcanvas"></canvas>
+        </div>
+    </div>
+
+
+
+</div>
+
+<!--Copyright (C) 2018 Puah Hock Leng - All Rights Reserved
+    Puah_Hock_Leng&#64;ite&#46;edu&#46;sg  -->
+    <script type="text/javascript">$(document).ready(function(){var t=320,e=240,a=30,i=$("#hints"),n=$("#alert1"),o=$("#alert2"),r=$("#fileTocrop"),s=$("#fileTosave"),d=$("#labelTosave"),c=$("#btnRotate"),h=$("#btnFlip"),l=$("#btnReady"),p=$("#btnAuto"),m=$("#btnClearrect"),u=$("#btnCrop"),f=$("#btnSave"),g=$("#btnLeft"),v=$("#btnRight"),b=$("#btnUp"),w=$("#btnDown"),C=$("#btnBig"),k=$("#btnSmall"),y=$(".filter"),_=$("#b_inc"),A=$("#b_dec"),I=$("#c_inc"),M=$("#c_dec"),x=$("#e_inc"),R=$("#e_dec"),T=$("#sa_inc"),Y=$("#sa_dec"),D=($("#sh_inc"),$("#sh_dec"),$("#myCanvas")),L=D[0],X=L.getContext("2d"),S=$("#myCanvasTop")[0],P=S.getContext("2d");P.globalAlpha=.2;var U,j=$("#myCropcanvas")[0],B=j.getContext("2d"),O=$("#myTempcanvas")[0],E=O.getContext("2d"),F=($("#picture"),$("#col2")),G=$("#col3"),J=$("#col4"),K=$("#samplepic"),W=1,q=!1,z=/ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase()),H=/msie|trident|edge/i.test(navigator.userAgent.toLowerCase()),N=/crios/i.test(navigator.userAgent.toLowerCase()),Q=/webkit/i.test(navigator.userAgent.toLowerCase()),V=["Rotate/Flip photo if necessary.  Click 'Ready' to start cropping","Click 'Automatic' to generate the rectangle","Click ‘Clear’ to redo.  Click ‘Crop’ if OK.  Click Left/ Right/ Up/ Down/ Bigger/ Smaller to adjust.","Type in the filename to save as and click ‘Generate photo’","Select a photo from your device to crop. (After cropping, your photo should look like the sample below)","Only Safari browser is supported on iPhones/iPads.  Your browser is not supported!","Only Chrome browser is supported on Desktop computers/Laptops.  Your browser is not supported!","Edit Brightness, Contrast, Exposure and Saturation.  Then click 'Generate photo'"];z&&Q&&N?i.html("<div class='alert alert-danger' role='alert'>"+V[5]+"</div>"):H?i.html("<div class='alert alert-danger' role='alert'>"+V[6]+"</div>"):i.text(V[4]);var Z,tt;Z=L.getBoundingClientRect(),tt=window.devicePixelRatio,L.width=Math.round(tt*Z.right)-Math.round(tt*Z.left),L.height=Math.round(tt*Z.bottom)-Math.round(tt*Z.top),X.scale(tt,tt),s.hide(),d.hide(),D.hide(),c.hide(),h.hide(),l.hide(),p.hide(),m.hide(),u.hide(),f.hide(),g.hide(),v.hide(),b.hide(),w.hide(),C.hide(),k.hide(),y.hide();var et,at,it=new Image;r.on("change",function(a){i.text(V[0]),n.hide(),o.hide(),K.hide();var s=new FileReader;s.onload=function(a){it.onload=function(){var a=2*e,i=2*t;et=it.width,at=it.height,et>at?et>a&&(at*=a/et,et=a):at>i&&(et*=i/at,at=i),S.width=L.width=et,S.height=L.height=at,X.drawImage(it,0,0,et,at),W=Math.round(5/a*et)},it.src=a.target.result},s.readAsDataURL(a.target.files[0]),D.fadeIn(),F.addClass("col-12"),c.removeAttr("disabled").fadeIn(),h.removeAttr("disabled").fadeIn(),l.removeAttr("disabled").fadeIn(),r.hide(),!0,!0});var nt=1,ot=!1;c.on("click",function(t){i.text(V[0]),ot=!0,pt(),nt++,ot=!1,!0});var rt=1,st=!1;h.on("click",function(t){i.text(V[0]),st=!0,pt(),rt++,st=!1,!0});var dt,ct,ht,lt,pt=function(){X.clearRect(0,0,L.width,L.height);var t=ot?nt:nt-1;t%2==0?(S.width=L.width=et,S.height=L.height=at):(S.width=L.width=at,S.height=L.height=et),X.save(),t%2==0?X.translate(et/2,at/2):X.translate(at/2,et/2),X.rotate(90*t*Math.PI/180),X.translate(-et/2,-at/2),(st?rt:rt-1)%2==0||(t%2==0?(X.translate(et,0),X.scale(-1,1)):(X.translate(0,at),X.scale(1,-1))),X.drawImage(it,0,0,et,at),X.restore()},mt=!1;function ut(n){i.text(V[2]),D.faceDetection({complete:function(i){if(console.log(i),1!=i.length)mt=!0;else{dt=i[0].x;var n=(ct=(i[0].offsetX+i[0].width)*i[0].scaleX)-dt;dt-=n/5,(ct+=n/5)>=e&&(ct=e-a),ht=i[0].y;var o=(lt=ht+t*(ct-dt)/e)-ht;lt-=o/4,kt(dt,ht-=o/4,!1),kt(ct,lt,!0),yt(),_t()}},error:function(t,e){mt=!0}}),mt&&((lt=(ht=a)+t*((ct=e-a)-(dt=a))/e)>=t&&(ct=(dt=a)+e*((lt=t-a)-(ht=a))/t),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t()),console.log(dt,ct,ht,lt),!1,c.hide(),h.hide(),l.hide(),g.removeAttr("disabled").fadeIn(),v.removeAttr("disabled").fadeIn(),b.removeAttr("disabled").fadeIn(),w.removeAttr("disabled").fadeIn(),C.removeAttr("disabled").fadeIn(),k.removeAttr("disabled").fadeIn()}l.on("click",ut),p.on("click",ut),g.on("click",function(t){ct-=5,(dt-=5)<=0&&(X_temp=dt,dt=1,ct=ct+1-X_temp),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t(),q=!1}),v.on("click",function(t){dt+=5,(ct+=5)>=et&&(X_temp=ct,ct=et-1,dt=dt-(X_temp-et)-1),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t(),q=!1}),b.on("click",function(t){lt-=5,(ht-=5)<=0&&(Y_temp=ht,ht=1,lt=lt+1-Y_temp),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t(),q=!1}),w.on("click",function(t){ht+=5,(lt+=5)>=at&&(Y_temp=lt,lt=at-1,ht=ht-(Y_temp-at)-1),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t(),q=!1}),C.on("click",function(a){q||(lt=ht+t*((ct+=5)-dt)/e,ct>=et&&(X_temp=ct,ct=et-1,dt=dt-(X_temp-et)-1,q=!0),dt<=0&&(X_temp=dt,dt=1,ct=ct+1-X_temp),lt>=at&&(Y_temp=lt,lt=at-1,ht=ht-(Y_temp-at)-1,q=!0),ht<=0&&(Y_temp=ht,ht=1,lt=lt+1-Y_temp),kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t())}),k.on("click",function(a){lt=ht+t*((ct-=5)-dt)/e,kt(dt,ht,!1),kt(ct,lt,!0),yt(),_t(),q=!1}),m.on("click",function(t){i.text(V[1]),_t(),P.clearRect(0,0,L.width,L.height),!0,u.hide(),g.hide(),v.hide(),b.hide(),w.hide(),C.hide(),k.hide(),y.hide(),l.removeAttr("disabled").fadeIn(),q=!1}),u.on("click",function(){if(i.text(V[7]),m.hide(),u.hide(),g.hide(),v.hide(),b.hide(),w.hide(),C.hide(),k.hide(),p.hide(),f.removeAttr("disabled").fadeIn(),y.show(),bt>Ct){var a=bt;bt=Ct,Ct=a}if(wt>$t){a=wt;wt=$t,$t=a}U=X.getImageData(bt,wt,Ct-bt,$t-wt),O.width=Ct-bt,O.height=$t-wt,E.putImageData(U,0,0),j.width=e,j.height=t;var n=new Image;n.onload=function(){B.drawImage(n,0,0,e,t)},n.src=O.toDataURL(),F.remove(),G.addClass("col-6"),J.remove(),!0});_.on("click",function(){Caman("#myCropcanvas",function(){this.brightness(4),this.render()})}),A.on("click",function(){Caman("#myCropcanvas",function(){this.brightness(-4),this.render()})}),I.on("click",function(){Caman("#myCropcanvas",function(){this.contrast(4),this.render()})}),M.on("click",function(){Caman("#myCropcanvas",function(){this.contrast(-4),this.render()})}),x.on("click",function(){Caman("#myCropcanvas",function(){this.exposure(4),this.render()})}),R.on("click",function(){Caman("#myCropcanvas",function(){this.exposure(-4),this.render()})}),T.on("click",function(){Caman("#myCropcanvas",function(){this.saturation(4),this.render()})}),Y.on("click",function(){Caman("#myCropcanvas",function(){this.saturation(-4),this.render()})}),f.on("click",function(){var t="<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Photo Uploading and Cropping Tool</title><link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css'><script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js'><\/script></head><body><div class='container-fluid'><p class='mb-1'><div class='alert alert-danger' role='alert'>(1) To save the photo: Tap and hold on the image. Select the Save Image button to save.  (2) To login and upload via <a href='https://myportal.ite.edu.sg/photo'>myportal.ite.edu.sg/photo</a>.</div></p><div class='text-center'><img src='"+j.toDataURL("image/jpeg",1)+"' alt='from canvas'/></div></div></body></html>",e=window.open();e.document.write(t),e?e.focus():alert("Please allow popups for this website")});var ft=new Array,gt=new Array,vt=new Array,bt=0,wt=0,Ct=0,$t=0,kt=function(t,e,a){ft.push(t),gt.push(e),vt.push(a)},yt=function(){P.strokeStyle="#df4b26",P.lineJoin="butt",P.lineWidth=W,ft.length>0&&(P.clearRect(0,0,L.width,L.height),bt=ft[0],wt=gt[0],Ct=ft[ft.length-1],$t=gt[gt.length-1],bt<Ct&&wt<$t?(Math.abs(Ct-bt)/Math.abs($t-wt)<e/t?$t=t/e*(Ct-bt)+wt:Ct=e/t*($t-wt)+bt,P.strokeRect(bt,wt,Math.abs(Ct-bt),Math.abs($t-wt))):bt>Ct&&wt<$t?(Math.abs(Ct-bt)/Math.abs($t-wt)<e/t?$t=t/e*(bt-Ct)+wt:Ct=bt-e/t*($t-wt),P.strokeRect(Ct,wt,Math.abs(Ct-bt),Math.abs($t-wt))):bt<Ct&&wt>$t?(Math.abs(Ct-bt)/Math.abs($t-wt)<e/t?$t=t/e*(Ct-bt)+wt:Ct=e/t*(wt-$t)+bt,P.strokeRect(bt,$t,Math.abs(Ct-bt),Math.abs($t-wt))):(Math.abs(Ct-bt)/Math.abs($t-wt)<e/t?$t=t/e*(bt-Ct)+wt:Ct=bt-e/t*(wt-$t),P.strokeRect(Ct,$t,Math.abs(Ct-bt),Math.abs($t-wt))),m.removeAttr("disabled").fadeIn(),u.removeAttr("disabled").fadeIn(),c.hide(),h.hide())},_t=function(){ft.length=0,gt.length=0,vt.length=0,!1}});</script>
+    </body>
+</html>
